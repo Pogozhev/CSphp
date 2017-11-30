@@ -592,7 +592,7 @@ input[type="submit"],input[type="reset"],a,.agileinfo_services_grid1_pos,.agilei
 	position:relative;
 	margin-bottom: 1em;
 }
-.footer_grid h2:after{
+/*.footer_grid h2:after{
 	content: '';
     position: absolute;
     top: 55%;
@@ -600,7 +600,7 @@ input[type="submit"],input[type="reset"],a,.agileinfo_services_grid1_pos,.agilei
     width: 25%;
     height: 2px;
     background: #fff;
-}
+}*/
 .footer_grid h2 span{
 	color:#00ba66;
 }
@@ -648,9 +648,9 @@ input[type="submit"],input[type="reset"],a,.agileinfo_services_grid1_pos,.agilei
 	font-weight:bold;
 	text-decoration:none;
 }
-.footer_nav li a:hover,.footer_nav li a.active{
+/*.footer_nav li a:hover,.footer_nav li a.active{
 	color:#00ba66;
-}
+}*/
 .footer_grid p{
 	color:#999;
 	line-height:1.8em;
