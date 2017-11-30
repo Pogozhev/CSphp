@@ -404,7 +404,7 @@ input[type="submit"],input[type="reset"],a,.agileinfo_services_grid1_pos,.agilei
 .header span{
 	color:#00ba66;
 }
-.header:after{
+/*.header:after{
 	content: '';
     background: #212121;
     height: 2px;
@@ -412,7 +412,7 @@ input[type="submit"],input[type="reset"],a,.agileinfo_services_grid1_pos,.agilei
     left: 14%;
     position: absolute;
     top: 49%;
-}
+}*/
 .work_grid_left{
 	float:left;
 	width:50%;
