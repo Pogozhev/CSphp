@@ -38,6 +38,17 @@
   <![endif]-->
 </head>
 <body class="hold-transition skin-green sidebar-mini">
+<script type="text/javascript">
+  $("#loadcontent").on("click", function(e){
+  $.ajax({
+    type: "get",
+    url: "field.html",
+    success: function(content){
+      $("#content-wrapper").html(content);
+    }
+  });
+});
+</script>
 <div class="wrapper">
 
   <header class="main-header">
@@ -117,7 +128,7 @@
               <!-- Menu Footer-->
               <li class="user-footer">
                 <div class="pull-left">
-                  <a href="profile.html" class="btn btn-default btn-flat">Profile</a>
+                  <a href="javascript:document.getElementById('profile').submit()" class="btn btn-default btn-flat">Profile</a>
                 </div>
                 <div class="pull-right">
                   <a href="#" class="btn btn-default btn-flat">Sign out</a>
@@ -147,26 +158,23 @@
           <a href="#"><i class="fa fa-leaf text-success"></i> Online</a>
         </div>
       </div>
-      
       <!-- sidebar menu: : style can be found in sidebar.less -->
       <ul class="sidebar-menu">
         <li class="header">MAIN NAVIGATION</li>
         <li>
-          <a href="cropsafe.html">
+          <a href="javascript:document.getElementById('monitoring').submit()">
             <i class="fa fa-home"></i> <span>Главная</span>
             
           </a>
         </li>
         
          <li>
-          <a href="monitoring.html">
-            <i class="fa fa-eye"></i> <span>Панель мониторинга</span>
-            
-          </a>
+          <a href="javascript:document.getElementById('monitoring').submit()">
+              <i class="fa fa-eye"></i> <span>Панель мониторинга</span></a>
         </li>
 
          <li>
-          <a href="field.html">
+          <a href="javascript:document.getElementById('field').submit()">
             <i class="fa fa-leaf"></i> <span>Поля</span>
             
           </a>
@@ -192,9 +200,15 @@
             
           </a>
         </li>
-        
-        
-          
+        <form id="field" method="GET" action="#">
+          <input type="hidden" name="page" value="field">
+        </form>        
+        <form id="monitoring" method="GET" action="#">
+          <input type="hidden" name="page" value="monitoring">
+        </form> 
+        <form id="profile" method="GET" action="#">
+          <input type="hidden" name="page" value="profile">
+        </form> 
         
         
         
@@ -204,107 +218,30 @@
   </aside>
 
   <!-- Content Wrapper. Contains page content -->
-  <div class="content-wrapper" style="min-height: 901px;">
-    <!-- Content Header (Page header) -->
-    <section class="content-header">
-      <h1>
-        Панель мониторинга культур
-        <small>Версия 0.1</small>
-      </h1>
-      <ol class="breadcrumb">
-        <li><a href="#"><i class="fa fa-home"></i> Дом</a></li>
-      </ol>
-    </section>
-
-    <!-- Main content ----------------------------------------------------------------->
-   
-    <section class="content">
-
-      
-      <!-- Info boxes ----------------------------------------------------------------->
-      
-      <div class="row">
-        <div class="col-md-3 col-sm-6 col-xs-12">
-          <div class="info-box">
-            <span class="info-box-icon"><img  style="vertical-align: baseline" src="dist/img/2.jpg"></span>
-
-            <div class="info-box-content">
-              <span class="info-box-text">Рэд скарлет</span>
-              <span class="info-box-number">Посев не начат</span>
-           
-            </div>
-            <!-- /.info-box-content -->
-          </div>
-          <!-- /.info-box -->
-        </div>
-        <!-- /.col -->
-        <div class="col-md-3 col-sm-6 col-xs-12">
-          <div class="info-box">
-            <span class="info-box-icon"><img  style="vertical-align: baseline" src="dist/img/1.jpg"></span>
-
-            <div class="info-box-content">
-              <span class="info-box-text">Латона</span>
-              <span class="info-box-number">Посев не начат</span>
-            </div>
-            <!-- /.info-box-content -->
-          </div>
-          <!-- /.info-box -->
-        </div>
-        <!-- /.col -->
-
-        <!-- fix for small devices only -->
-        <div class="clearfix visible-sm-block"></div>
-
-        <div class="col-md-3 col-sm-6 col-xs-12">
-          <div class="info-box">
-            <span class="info-box-icon"><img  style="vertical-align: baseline" src="dist/img/3.jpg"></span>
-
-            <div class="info-box-content">
-              <span class="info-box-text">Пшеница </span>
-              <span class="info-box-number">Обработать за 3 дней <i class="fa fa-warning text-red"></i></span>
-            </div>
-            <!-- /.info-box-content -->
-          </div>
-          <!-- /.info-box -->
-        </div>
-        <!-- /.col -->
+    <div class="content-wrapper" style="min-height: 901px;">
+      <?php
+        if(isset($_GET['page'])){
+          switch ($_GET['page']) {
+            case 'field':
+              echo file_get_contents('field.html');
+              break;
+            case 'monitoring':
+              echo file_get_contents('monitoring.html');
+              break;
+            case 'profile':
+              echo file_get_contents('profile.html');
+              break;
+            default:
+              echo file_get_contents('monitoring.html');
+              break;
+          }
+        }else{
+          echo file_get_contents('monitoring.html');
+        }
         
-        
-      </div>
-      <!-- /.row ---------------------------------------------------------------------->
-
-      
-      <div class="row">
-        
-        <div class="col-md-12">
-          <!-- LINE CHART -->
-          <div class="box box-info">
-            <div class="box-header with-border">
-              <h3 class="box-title">Будущий график погоды</h3>
-
-              <div class="box-tools pull-right">
-                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
-                </button>
-                <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
-              </div>
-            </div>
-            <div class="box-body chart-responsive">
-              <div class="chart" id="line-chart" style="height: 200px;"></div>
-            </div>
-            <!-- /.box-body -->
-          </div>
-          <!-- /.box -->
-
-         
-
-        </div>
-        <!-- /.col (RIGHT) -->
-      </div>
-      <!-- /.row -->
-      
-    </section>
+      ?>
+    </div>
     <!-- /.content -->
-  </div>
   
   <!-- /.content-wrapper -->
   <footer class="main-footer">
@@ -399,7 +336,29 @@ navigator.geolocation.getCurrentPosition(
 <!-- FastClick -->
 
 
+<script type="text/javascript">
+  // Request (GET #?page=field)
+function change(){
+   $.ajax({
+      url: "field.html",
+      type: "GET",
+  })
+  .done(function(data, textStatus, jqXHR) {
+      console.log("HTTP Request Succeeded: " + jqXHR.status);
+      console.log(data);
+  })
+  .fail(function(jqXHR, textStatus, errorThrown) {
+      console.log("HTTP Request Failed");
+  })
+  .always(function() {
+      /* ... */
+  });
+ 
+}
 
+
+
+</script>
 
 
 
