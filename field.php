@@ -33,14 +33,15 @@
               }
           }
           // Координаты для погоды
-          function getCoordinate($name){
+          function getCrop($name){
             include('regFiles/bd.php');
               $result = $mysqli->query("SELECT * FROM test_field WHERE name = '$name'");
               $test = [];
+              $x = 0;
               if ($result->num_rows > 0) {
                   while($row = $result->fetch_assoc()) {
-                      $test[0] = $row['gisx'];
-                      $test[1] = $row['gisy'];
+                      $test[$x] = $row['crop'];
+                      $x++;
                       //$coordinates = $coordinates . "{lat: {$row['gisx']}, lng: {$row['gisy']}},";
                   }
                   return $test;
@@ -48,9 +49,11 @@
               }
           }
           $names = (array_unique(getNames()));
+          //$crop = getCrop();
           foreach ($names as $key) {
-            echo "Поле: " . $key;echo "<h1>-10˚</h1><hr><br>";
-            echo ("<script>var lat = ".getCoordinate($key)[0]."; var lon = ".getCoordinate($key)[1]." weather(lat,lon);</script>");
+            echo "Поле: " . $key;echo "<h1>-10˚</h1><br>";
+            echo "Культура: " . getCrop($key)[0];echo "<hr><br>";
+            //echo ("<script>var lat = ".getCoordinate($key)[0]."; var lon = ".getCoordinate($key)[1]." weather(lat,lon);</script>");
           }
         ?>
         <script type="text/javascript">

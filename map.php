@@ -135,6 +135,8 @@
           google.maps.event.addListener(drawingManager, 'polygoncomplete', function (polygon) {
             var table_name = prompt('Назовите поле!', 'some_field');
             alert('Название поля: ' + table_name);
+            var table_crop = prompt('Что выращиваете?', 'Potato');
+            alert('Название поля: ' + table_crop);
             for (var i = 0; i < polygon.getPath().getLength(); i++) {
               array[i] = polygon.getPath().getAt(i).toUrlValue(6).split(',');
               $.ajax({
@@ -147,6 +149,7 @@
               data: JSON.stringify({
                   "gisx": array[i][0],
                   "name": table_name,
+                  "crop": table_crop,
                   "gisy": array[i][1]
               })
           })
