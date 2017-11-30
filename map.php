@@ -1,16 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-        <?php
-      if(isset($_GET['type'])){
-        if($_GET['type'] == 'cut'){
-          echo '<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAAU3XOPaAGyJzmNRAggy0mA167K06Cs4k&libraries=drawing"></script>';
-        }
-        if($_GET['type'] == 'select'){
-          echo '<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAAU3XOPaAGyJzmNRAggy0mA167K06Cs4k&libraries=drawing&callback=main"></script>';
-        } 
-      }
-    ?>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAAU3XOPaAGyJzmNRAggy0mA167K06Cs4k&libraries=drawing&callback=main"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
     <meta charset="utf-8">
@@ -30,28 +21,99 @@
     </style>
   </head>
   <body>
-    <form action="#" method="GET"><input type="hidden" name="type" value="cut"><button type="submit">Cut</button></form>
-    <form action="#" method="GET"><input type="hidden" name="type" value="select"><button type="submit">Select</button></form>
-    <button onclick="color_change('red')">Red</button>
-    <button onclick="color_change('green')">Green</button>
-    <button onclick="color_change('blue')">Blue</button>
     <div id="map"></div>
     <script>
+      function addScript(src){
+        var script = document.createElement('script');
+        script.src = src;
+        script.async = false; // чтобы гарантировать порядок
+        document.head.appendChild(script);
+      }
       function main(){
-          var map = new google.maps.Map(document.getElementById('map'), {
-            zoom: 11,
-              center: {lat: 56.4650333, lng: 84.9575614},
-          });
-          select(map);
-          return map;
+          // This example creates a triangular polygon with a hole in it.
+        var map = new google.maps.Map(document.getElementById('map'), {
+          zoom: 13,
+          center: {lat: 56.442948, lng: 84.918652},
+        });
+        // Define the LatLng coordinates for the polygon's  outer path.
+        var outerCoords = [
+          {lat: 56.440861, lng: 84.878483},
+          {lat: 56.435357, lng: 84.866467},
+          {lat: 56.431845, lng: 84.87711},
+          {lat: 56.428428, lng: 84.869728},
+          {lat: 56.432984, lng: 84.900112},
+        ];
+
+        // Construct the polygon, including both paths.
+        var bermudaTriangle = new google.maps.Polygon({
+          paths: [outerCoords],
+          strokeColor: '#FFC107',
+          strokeOpacity: 0.8,
+          strokeWeight: 2,
+          fillColor: '#FFC107',
+          fillOpacity: 0.35
+        });
+        bermudaTriangle.setMap(map);
+
+
+        // Создани множества полей из таблиц
+
+        <?php
+          function viewField($field_name){
+            include('regFiles/bd.php');
+            $coordinates = '';
+              $result = $mysqli->query("SELECT * FROM test_field WHERE name = '$field_name'");
+              if ($result->num_rows > 0) {
+                  while($row = $result->fetch_assoc()) {
+                      $coordinates = $coordinates . "{lat: {$row['gisx']}, lng: {$row['gisy']}},";
+                  }
+              }
+            echo "var outerCoords1 = [
+              
+              {$coordinates}
+
+            ];
+
+            // Construct the polygon, including both paths.
+            var bermudaTriangle1 = new google.maps.Polygon({
+              paths: [outerCoords1],
+              strokeColor: '#FFC107',
+              strokeOpacity: 0.8,
+              strokeWeight: 2,
+              fillColor: '#FFC107',
+              fillOpacity: 0.35
+            });
+            bermudaTriangle1.setMap(map);"; 
+          }
+
+          // Уникальные имена
+          function getNames(){
+            include('regFiles/bd.php');
+              $result = $mysqli->query("SELECT * FROM test_field");
+              $test = [];
+              $x = 0;
+              if ($result->num_rows > 0) {
+                  while($row = $result->fetch_assoc()) {
+                      $test[$x] = $row['name'];
+                      $x++;
+                      //$coordinates = $coordinates . "{lat: {$row['gisx']}, lng: {$row['gisy']}},";
+                  }
+                  return $test;
+                  //var_dump($row['name']);
+              }
+          }
+          $names = (array_unique(getNames()));
+          foreach ($names as $key) {
+            viewField($key);
+          }
+        ?> 
+
+        // Define the LatLng coordinates for the polygon's  outer path.
+        
+        draw(map);
       }
-      var color = 'black';
-      function color_change(change_color){
-        color = change_color;
-        select(map);
-      }
-      function select(map, color){
-           var drawingManager = new google.maps.drawing.DrawingManager({
+      function draw(map){
+        var drawingManager = new google.maps.drawing.DrawingManager({
             drawingMode: google.maps.drawing.OverlayType.MARKER,
             drawingControl: true,
             drawingControlOptions: {
@@ -59,10 +121,10 @@
               drawingModes: ['polygon']
             },
             polygonOptions: {
-              fillColor: color,
+              fillColor: 'black',
               fillOpacity: 0.8,
               strokeWeight: 2,
-              strokeColor: color,
+              strokeColor: 'black',
               clickable: true,
               editable: true,
               zIndex: 1
@@ -73,66 +135,37 @@
           google.maps.event.addListener(drawingManager, 'polygoncomplete', function (polygon) {
             for (var i = 0; i < polygon.getPath().getLength(); i++) {
               array[i] = polygon.getPath().getAt(i).toUrlValue(6).split(',');
+              $.ajax({
+              url: "addfield.php",
+              type: "POST",
+              headers: {
+                  "Content-Type": "application/json; charset=utf-8",
+              },
+              contentType: "application/json",
+              data: JSON.stringify({
+                  "gisx": array[i][0],
+                  "name": "blue_field",
+                  "gisy": array[i][1]
+              })
+          })
+          .done(function(data, textStatus, jqXHR) {
+              console.log("HTTP Request Succeeded: " + jqXHR.status);
+              console.log(data);
+          })
+          .fail(function(jqXHR, textStatus, errorThrown) {
+              console.log("HTTP Request Failed");
+          })
+          .always(function() {
+              /* ... */
+          });
                 //console.log(array[i]);
             }
           console.log(array);
-          weather(array[0][0], array[0][1]);
-              array = [];
-          });
-      } 
-      function initMap() {
-         var drawingManager = new google.maps.drawing.DrawingManager({
-          drawingMode: google.maps.drawing.OverlayType.MARKER,
-          drawingControl: true,
-          drawingControlOptions: {
-            position: google.maps.ControlPosition.TOP_CENTER,
-            drawingModes: ['polygon']
-          },
-          polygonOptions: {
-
-            zIndex: 1
+      });
         }
-        });
-        drawingManager.setMap(map);
-        var array = [];
-        google.maps.event.addListener(drawingManager, 'polygoncomplete', function (polygon) {
-          for (var i = 0; i < polygon.getPath().getLength(); i++) {
-            array[i] = polygon.getPath().getAt(i).toUrlValue(6).split(',');
-              //console.log(array[i]);
-          }
-          //console.log(parseFloat(array[0][0]));
-            polygon.setMap(null);
-            test(array);
-        console.log(array);
-            array = [];
-        });
-        function test(array){
-          var outerCoords = [
-          {lat: 25.774, lng: -80.190},
-          {lat: 18.466, lng: -66.118},
-          {lat: 32.321, lng: -64.757}
-        ];
-          weather(array[0][0],array[0][1]);
-          var innerCoords = [
-            {lat: parseFloat(array[0][0]), lng: parseFloat(array[0][1])},
-            {lat: parseFloat(array[1][0]), lng: parseFloat(array[1][1])},
-            {lat: parseFloat(array[2][0]), lng: parseFloat(array[2][1])}
-          ];
-        var bermudaTriangle = new google.maps.Polygon({
-          paths: [outerCoords, innerCoords],
-          strokeColor: '#FFC107',
-          strokeOpacity: 0.8,
-          strokeWeight: 2,
-          fillColor: '#000000',
-          fillOpacity: 0.35
-        });
-        bermudaTriangle.setMap(map);
-        }
-        //console.log(array);
-      }
-      function weather(lat,lon){
+     // function weather(lat,lon){
         // Request (GET http://api.openweathermap.org/data/2.5/weather)
-    $.ajax({
+    /*$.ajax({
         url: "http://api.openweathermap.org/data/2.5/weather",
         type: "GET",
         data: {
@@ -149,9 +182,8 @@
         console.log("HTTP Request Failed");
     })
     .always(function() {
-        /* ... */
     });
-      }
+      }*/
       //initMap();
     </script>
   </body>

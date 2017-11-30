@@ -1,3 +1,9 @@
+<?php
+  session_start();
+  if(empty($_SESSION['login'])){
+    header('Location: index.php');
+  }
+?>
 <!DOCTYPE html>
 <html>
 <head>
@@ -38,17 +44,6 @@
   <![endif]-->
 </head>
 <body class="hold-transition skin-green sidebar-mini">
-<script type="text/javascript">
-  $("#loadcontent").on("click", function(e){
-  $.ajax({
-    type: "get",
-    url: "field.html",
-    success: function(content){
-      $("#content-wrapper").html(content);
-    }
-  });
-});
-</script>
 <div class="wrapper">
 
   <header class="main-header">
@@ -223,7 +218,7 @@
         if(isset($_GET['page'])){
           switch ($_GET['page']) {
             case 'field':
-              echo file_get_contents('field.html');
+              include('field.php');// file_get_contents('field.php');
               break;
             case 'monitoring':
               echo file_get_contents('monitoring.html');
