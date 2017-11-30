@@ -33,10 +33,10 @@
           // This example creates a triangular polygon with a hole in it.
         var map = new google.maps.Map(document.getElementById('map'), {
           zoom: 13,
-          center: {lat: 56.442948, lng: 84.918652},
+          center: {lat: 56.4404073, lng: 84.896531},
         });
         // Define the LatLng coordinates for the polygon's  outer path.
-        var outerCoords = [
+        /*var outerCoords = [
           {lat: 56.440861, lng: 84.878483},
           {lat: 56.435357, lng: 84.866467},
           {lat: 56.431845, lng: 84.87711},
@@ -53,7 +53,7 @@
           fillColor: '#FFC107',
           fillOpacity: 0.35
         });
-        bermudaTriangle.setMap(map);
+        bermudaTriangle.setMap(map);*/
 
 
         // Создани множества полей из таблиц
@@ -133,6 +133,8 @@
           drawingManager.setMap(map);
           var array = [];
           google.maps.event.addListener(drawingManager, 'polygoncomplete', function (polygon) {
+            var table_name = prompt('Назовите поле!', 'some_field');
+            alert('Название поля: ' + table_name);
             for (var i = 0; i < polygon.getPath().getLength(); i++) {
               array[i] = polygon.getPath().getAt(i).toUrlValue(6).split(',');
               $.ajax({
@@ -144,7 +146,7 @@
               contentType: "application/json",
               data: JSON.stringify({
                   "gisx": array[i][0],
-                  "name": "blue_field",
+                  "name": table_name,
                   "gisy": array[i][1]
               })
           })

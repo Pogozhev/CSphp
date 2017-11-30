@@ -32,11 +32,52 @@
                   //var_dump($row['name']);
               }
           }
+          // Координаты для погоды
+          function getCoordinate($name){
+            include('regFiles/bd.php');
+              $result = $mysqli->query("SELECT * FROM test_field WHERE name = '$name'");
+              $test = [];
+              if ($result->num_rows > 0) {
+                  while($row = $result->fetch_assoc()) {
+                      $test[0] = $row['gisx'];
+                      $test[1] = $row['gisy'];
+                      //$coordinates = $coordinates . "{lat: {$row['gisx']}, lng: {$row['gisy']}},";
+                  }
+                  return $test;
+                  //var_dump($row['name']);
+              }
+          }
           $names = (array_unique(getNames()));
           foreach ($names as $key) {
-            echo "Поле: " . $key;echo "<hr><br>";
+            echo "Поле: " . $key;echo "<h1>-10˚</h1><hr><br>";
+            echo ("<script>var lat = ".getCoordinate($key)[0]."; var lon = ".getCoordinate($key)[1]." weather(lat,lon);</script>");
           }
         ?>
+        <script type="text/javascript">
+          function weather(lat,lon){
+        // Request (GET http://api.openweathermap.org/data/2.5/weather)
+              $.ajax({
+                  url: "http://api.openweathermap.org/data/2.5/weather",
+                  type: "GET",
+                  data: {
+                      "lat": lat,
+                      "lon": lon,
+                      "appid": "ab61ea89ff98bda8da4d1a89fa7fa899",
+                  },
+              })
+              .done(function(data, textStatus, jqXHR) {
+                  console.log("HTTP Request Succeeded: " + jqXHR.status);
+                  console.log(data);
+              })
+              .fail(function(jqXHR, textStatus, errorThrown) {
+                  console.log("HTTP Request Failed");
+              })
+              .always(function() {
+                  /* ... */
+              });
+          }
+
+        </script>
       </center>
       </div>
       <div align="right" style="width: 69%; display: inline-block; margin-top: 19px;">
