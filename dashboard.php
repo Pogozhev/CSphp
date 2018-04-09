@@ -1,9 +1,4 @@
-<?php
-  session_start();
-  if(empty($_SESSION['login'])){
-    header('Location: index.html');
-  }
-?>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -63,8 +58,8 @@
 
       <div class="navbar-custom-menu">
         <ul class="nav navbar-nav">
-          
-          
+
+
           <!-- Notifications: style can be found in dropdown.less -->
           <li class="dropdown notifications-menu">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
@@ -76,7 +71,7 @@
               <li>
                 <!-- inner menu: contains the actual data -->
                 <ul class="menu">
-                  
+
                   <li>
                     <a href="#">
                       <i class="fa fa-warning text-yellow"></i> Обработать в течении 7 дней
@@ -102,7 +97,7 @@
               <li class="footer"><a href="#">Все</a></li>
             </ul>
           </li>
-          
+
           <!-- User Account: style can be found in dropdown.less -->
           <li class="dropdown user user-menu">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
@@ -119,7 +114,7 @@
                   <small>Member since Nov. 2017</small>
                 </p>
               </li>
-                            
+
               <!-- Menu Footer-->
               <li class="user-footer">
                 <div class="pull-left">
@@ -159,10 +154,10 @@
         <li>
           <a href="javascript:document.getElementById('monitoring').submit()">
             <i class="fa fa-home"></i> <span>Главная</span>
-            
+
           </a>
         </li>
-        
+
          <li>
           <a href="javascript:document.getElementById('monitoring').submit()">
               <i class="fa fa-eye"></i> <span>Панель мониторинга</span></a>
@@ -171,43 +166,43 @@
          <li>
           <a href="javascript:document.getElementById('field').submit()">
             <i class="fa fa-leaf"></i> <span>Поля</span>
-            
+
           </a>
         </li>
 
          <li>
           <a href="#">
             <i class="fa fa-laptop"></i> <span>Работа</span>
-            
+
           </a>
         </li>
-        
+
         <li>
           <a href="#">
             <i class="fa fa-shopping-cart"></i> <span>Магазин</span>
-            
+
           </a>
         </li>
-        
+
         <li>
           <a href="#">
             <i class="fa fa-folder-o"></i> <span>Справочник</span>
-            
+
           </a>
         </li>
         <form id="field" method="GET" action="#">
           <input type="hidden" name="page" value="field">
-        </form>        
+        </form>
         <form id="monitoring" method="GET" action="#">
           <input type="hidden" name="page" value="monitoring">
-        </form> 
+        </form>
         <form id="profile" method="GET" action="#">
           <input type="hidden" name="page" value="profile">
-        </form> 
-        
-        
-        
-        
+        </form>
+
+
+
+
     </section>
     <!-- /.sidebar -->
   </aside>
@@ -218,7 +213,7 @@
         if(isset($_GET['page'])){
           switch ($_GET['page']) {
             case 'field':
-              include('field.php');// file_get_contents('field.php');
+              include('fuck.php');// file_get_contents('field.php');
               break;
             case 'monitoring':
               echo file_get_contents('monitoring.html');
@@ -233,11 +228,11 @@
         }else{
           echo file_get_contents('monitoring.html');
         }
-        
+
       ?>
     </div>
     <!-- /.content -->
-  
+
   <!-- /.content-wrapper -->
   <footer class="main-footer">
     <div class="pull-right hidden-xs">
@@ -348,7 +343,7 @@ function change(){
   .always(function() {
       /* ... */
   });
- 
+
 }
 
 

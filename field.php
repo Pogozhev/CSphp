@@ -12,7 +12,7 @@
     </section>
 
     <!-- Main content -->
-   
+
       <div align="top" style="height: 100%; width: 30%; display: inline-block; vertical-align: top; min-height: 700px;">
         <center><hr><?php
           include('regFiles/bd.php');
@@ -30,12 +30,16 @@
                   }
                   return $test;
                   //var_dump($row['name']);
+              }else{
+                echo "<script>alert('Пусто сука')</script>";
+                return 'empty';
               }
           }
           // Координаты для погоды
           function getCrop($name){
             include('regFiles/bd.php');
               $result = $mysqli->query("SELECT * FROM test_field WHERE name = '$name'");
+              echo $result;
               $test = [];
               $x = 0;
               if ($result->num_rows > 0) {
@@ -48,12 +52,16 @@
                   //var_dump($row['name']);
               }
           }
-          $names = (array_unique(getNames()));
-          //$crop = getCrop();
-          foreach ($names as $key) {
-            echo "Поле: " . $key;echo "<h1>-10˚</h1><br>";
-            echo "Культура: " . getCrop($key)[0];echo "<hr><br>";
-            //echo ("<script>var lat = ".getCoordinate($key)[0]."; var lon = ".getCoordinate($key)[1]." weather(lat,lon);</script>");
+          if(getNames() == 'empty'){
+            echo "<h1>Добавьте свое первое поле прямо сейчас</h1><br>";
+          }else{
+            $names = (array_unique(getNames()));
+            //$crop = getCrop();
+            foreach ($names as $key) {
+              echo "Поле: " . $key;echo "<h1>-10˚</h1><br>";
+              echo "Культура: " . getCrop($key)[0];echo "<hr><br>";
+              //echo ("<script>var lat = ".getCoordinate($key)[0]."; var lon = ".getCoordinate($key)[1]." weather(lat,lon);</script>");
+            }
           }
         ?>
         <script type="text/javascript">
@@ -94,21 +102,12 @@
             echo "<script>alert('good')</script>";
           }
         }
-        /*
-  CREATE TABLE MyGuests (
-id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-firstname VARCHAR(30) NOT NULL,
-lastname VARCHAR(30) NOT NULL,
-email VARCHAR(50),
-reg_date TIMESTAMP
-)
-        */
       ?>
      <!-- map -->
      <!-- /map -->
-      
-      
-      
+
+
+
     <!-- /.content -->
-  
+
   <!-- /.content-wrapper -->

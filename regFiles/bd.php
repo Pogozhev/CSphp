@@ -1,4 +1,4 @@
 <?php
-$mysqli = new mysqli("localhost","n99949ql_phpshop","562798","n99949ql_phpshop");
+$mysqli = new mysqli("localhost","top4ek","q2w3e4r5","cropsafe");
 //$mysqli->set_charset("utf8");
 ?>
