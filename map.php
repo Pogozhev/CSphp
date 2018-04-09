@@ -78,6 +78,9 @@
         </button>
         <button onclick="draw_type = 'draw_hole'" class="btn btn-default btn-lg">
           <span class="glyphicon glyphicon-scissors" aria-hidden="true"> Cut</span>
+        </button><br><br>
+        <button onclick="all_fields = []; count = 0; draw_type = 'draw_new'; square = 0; document.getElementById('square').value = '0 га'; main1()" class="btn btn-danger btn-lg">
+          <span class="glyphicon glyphicon-trash" aria-hidden="true"> Удалить</span>
         </button>
         <br>
         <br>
@@ -106,6 +109,7 @@
         var map = new google.maps.Map(document.getElementById('map'), {
           zoom: 13,
           center: {lat: 56.4404073, lng: 84.896531},
+          mapTypeId: 'satellite'
         });
         /*var outerCoords = [
           {lat: 25.774, lng: -80.190},
