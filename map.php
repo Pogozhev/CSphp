@@ -3,7 +3,6 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>CropSafe 1 | Главная</title>
     <!-- Tell the browser to be responsive to screen width -->
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
     <!-- Bootstrap 3.3.6 -->
@@ -96,6 +95,7 @@
     <div id="map" class="col-md-9"></div>
     <script>
    	var count = 0
+    var countTmp = 1
     var all_fields = [];
    	var draw_type = 'draw_new'
     var square = 0
@@ -149,15 +149,16 @@
         var map = new google.maps.Map(document.getElementById('map'), {
           zoom: 13,
           center: {lat: 56.4404073, lng: 84.896531},
+          mapTypeId: 'satellite'
         });
         if(draw_type == 'draw_new'){
+          countTmp = 1
           for (var i = 0; i < all_fields.length; i++) {
             if(all_fields[i][1] !== undefined){
               map.data.add({geometry: new google.maps.Data.Polygon([all_fields[i][0], all_fields[i][1]])})
-              console.log('This fucking shit');
             }else{
-              var as = map.data.add({geometry: new google.maps.Data.Polygon([all_fields[i][0]])})
-              var fucking_shit_motherfucker = new google.maps.Polygon({
+              var as = map.data.add({geometry: new google.maps.Data.Polygon(all_fields[i])})
+              var suka_blyat = new google.maps.Polygon({
       	         paths: [all_fields[i][0]],
       	         strokeColor: '#FFC107',
       	         strokeOpacity: 0.8,
@@ -165,7 +166,7 @@
       	         fillColor: '#FFC107',
       	         fillOpacity: 0.35
       	       });
-              square = (google.maps.geometry.spherical.computeArea(fucking_shit_motherfucker.getPath())/10000).toFixed(2)
+              square = (google.maps.geometry.spherical.computeArea(suka_blyat.getPath())/10000).toFixed(2)
               document.getElementById('square').value = square + ' га'
             }
             //map.data.add({geometry: new google.maps.Data.Polygon([all_fields[0][0], all_fields[1][1]])})
@@ -173,23 +174,41 @@
           //count += 1
         }else{
           for (var i = 0; i < all_fields.length; i++) {
-            if(all_fields[i][1] !== undefined){
-              var fucking_shit_motherfucker = new google.maps.Polygon({
-      	         paths: [all_fields[i][1]],
-      	         strokeColor: '#FFC107',
-      	         strokeOpacity: 0.8,
-      	         strokeWeight: 2,
-      	         fillColor: '#FFC107',
-      	         fillOpacity: 0.35
-      	       });
-              tmp = google.maps.geometry.spherical.computeArea(fucking_shit_motherfucker.getPath())/10000
+            if(countTmp > 1){
+              var suka_blyat = new google.maps.Polygon({
+                 paths: [all_fields[i][1]],
+                 strokeColor: '#FFC107',
+                 strokeOpacity: 0.8,
+                 strokeWeight: 2,
+                 fillColor: '#FFC107',
+                 fillOpacity: 0.35
+               });
+              tmp = google.maps.geometry.spherical.computeArea(suka_blyat.getPath())/10000
               tmp = tmp.toFixed(2)
               square -= tmp
               document.getElementById('square').value = square.toFixed(2) + ' га'
-              map.data.add({geometry: new google.maps.Data.Polygon([all_fields[i][0], all_fields[i][1]])})
-              console.log('This fucking shit');
+              map.data.add({geometry: new google.maps.Data.Polygon(all_fields[i])})
+              countTmp += 1
+              //all_fields[count][countTmp+1] =
             }else{
-              map.data.add({geometry: new google.maps.Data.Polygon([all_fields[i][0]])})
+              if(all_fields[i][1] !== undefined){
+                var suka_blyat = new google.maps.Polygon({
+                   paths: [all_fields[i][1]],
+                   strokeColor: '#FFC107',
+                   strokeOpacity: 0.8,
+                   strokeWeight: 2,
+                   fillColor: '#FFC107',
+                   fillOpacity: 0.35
+                 });
+                tmp = google.maps.geometry.spherical.computeArea(suka_blyat.getPath())/10000
+                tmp = tmp.toFixed(2)
+                square -= tmp
+                document.getElementById('square').value = square.toFixed(2) + ' га'
+                map.data.add({geometry: new google.maps.Data.Polygon([all_fields[i][0], all_fields[i][1]])})
+                countTmp += 1
+              }else{
+                map.data.add({geometry: new google.maps.Data.Polygon([all_fields[i][0]])})
+              }
             }
             //map.data.add({geometry: new google.maps.Data.Polygon([all_fields[0][0], all_fields[1][1]])})
           }
@@ -239,7 +258,7 @@
                 console.log(array[i][0])
               }
               //all_fields[count-1] = []
-              all_fields[count-1][1] = innerCoords
+              all_fields[count-1][countTmp] = innerCoords
               console.log(all_fields);
               main1()
               console.log(innerCoords)
