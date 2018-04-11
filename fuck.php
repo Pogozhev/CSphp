@@ -15,25 +15,32 @@
   <section class="content">
     <hr>
     <?php
-      /*session_start();
       include('regFiles/bd.php');
-      $q = $mysqli->query("SELECT * FROM ".$_SESSION['login']."");
-      if (mysql_num_rows($q)==0){
-          $ebuchaya_ditch = 'true';
+      $result = $mysqli->query("SELECT * FROM people WHERE name = '".$_SESSION['login']."'");
+      if ($result->num_rows > 0) {
+          while($row = $result->fetch_assoc()) {
+              $rule = $row['rules'];
+          }
+      }
+      if($rule == 'manager'){
+        echo '<div class="embed-responsive embed-responsive-16by9" style="width: 100%;">
+          <iframe class="embed-responsive-item" src="all_map.php"></iframe>
+        </div>';
       }else{
-          $ebuchaya_ditch = 'false';
-      }*/
-      echo "<script>alert(".$_SESSION['login'].")</script>";
+        $result=$mysqli->query('select * from '.$_SESSION["login"].'');
+        $num=mysqli_num_rows($result);
+        if ($num>0){
+          echo '<div class="embed-responsive embed-responsive-16by9" style="width: 100%;">
+            <iframe class="embed-responsive-item" src="all_map.php"></iframe>
+          </div>';
+        }else{
+          echo '<div class="embed-responsive embed-responsive-16by9" style="width: 100%;">
+            <iframe class="embed-responsive-item" src="new_map.php"></iframe>
+          </div>';
+        }
+      }
     ?>
-    <div class="embed-responsive embed-responsive-16by9" style="width: 100%;">
-      <iframe class="embed-responsive-item" src="new_map.php"></iframe>
-    </div>
-
     <!-- /.row ---------------------------------------------------------------------->
-
-
-
-
   </section>
   <!-- /.content -->
 </div>

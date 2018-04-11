@@ -108,6 +108,7 @@
           all_fields.push(square);
           all_fields.push(document.getElementById("culture").value);
           var xhr = new XMLHttpRequest();
+          console.log(all_fields);
           var url = "http://localhost/CSphp1/new_field.php?data=" + encodeURIComponent(JSON.stringify(all_fields));
           xhr.open("GET", url, true);
           xhr.setRequestHeader("Content-Type", "application/json");
@@ -115,7 +116,7 @@
               if (xhr.readyState === 4 && xhr.status === 200) {
                   console.log(xhr.responseText);
                   if(xhr.responseText == 'good'){
-                    window.open('http://localhost/CSphp1/dashboard.php')
+                    window.open('http://localhost/CSphp1/dashboard.php?page=field')
                   }
               }
           };
@@ -189,7 +190,7 @@
               map.data.add({geometry: new google.maps.Data.Polygon([all_fields[i][0], all_fields[i][1]])})
             }else{
               var as = map.data.add({geometry: new google.maps.Data.Polygon(all_fields[i])})
-              var suka_blyat = new google.maps.Polygon({
+              var z = new google.maps.Polygon({
       	         paths: [all_fields[i][0]],
       	         strokeColor: '#FFC107',
       	         strokeOpacity: 0.8,
@@ -197,7 +198,7 @@
       	         fillColor: '#FFC107',
       	         fillOpacity: 0.35
       	       });
-              square = (google.maps.geometry.spherical.computeArea(suka_blyat.getPath())/10000).toFixed(2)
+              square = (google.maps.geometry.spherical.computeArea(z.getPath())/10000).toFixed(2)
               document.getElementById('square').value = square + ' га'
             }
             //map.data.add({geometry: new google.maps.Data.Polygon([all_fields[0][0], all_fields[1][1]])})
@@ -206,7 +207,7 @@
         }else{
           for (var i = 0; i < all_fields.length; i++) {
             if(countTmp > 1){
-              var suka_blyat = new google.maps.Polygon({
+              var z = new google.maps.Polygon({
                  paths: [all_fields[i][1]],
                  strokeColor: '#FFC107',
                  strokeOpacity: 0.8,
@@ -214,7 +215,7 @@
                  fillColor: '#FFC107',
                  fillOpacity: 0.35
                });
-              tmp = google.maps.geometry.spherical.computeArea(suka_blyat.getPath())/10000
+              tmp = google.maps.geometry.spherical.computeArea(z.getPath())/10000
               tmp = tmp.toFixed(2)
               square -= tmp
               document.getElementById('square').value = square.toFixed(2) + ' га'
@@ -223,7 +224,7 @@
               //all_fields[count][countTmp+1] =
             }else{
               if(all_fields[i][1] !== undefined){
-                var suka_blyat = new google.maps.Polygon({
+                var z = new google.maps.Polygon({
                    paths: [all_fields[i][1]],
                    strokeColor: '#FFC107',
                    strokeOpacity: 0.8,
@@ -231,7 +232,7 @@
                    fillColor: '#FFC107',
                    fillOpacity: 0.35
                  });
-                tmp = google.maps.geometry.spherical.computeArea(suka_blyat.getPath())/10000
+                tmp = google.maps.geometry.spherical.computeArea(z.getPath())/10000
                 tmp = tmp.toFixed(2)
                 square -= tmp
                 document.getElementById('square').value = square.toFixed(2) + ' га'
