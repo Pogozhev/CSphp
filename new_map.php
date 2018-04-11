@@ -54,15 +54,15 @@
   <body>
     <div id="field_table" class="col-md-3">
       <h1>Создай поле</h1>
-      <input type="text" class="form-control" id="name_field" placeholder="Название поля">
+      <input type="text" class="form-control" id="field_name" placeholder="Название поля">
       <div class="form-group">
-        <label for="exampleFormControlSelect1">Цвет</label>
-        <select class="form-control" id="exampleFormControlSelect1">
-          <option>Красный</option>
-          <option>Желтый</option>
-          <option>Синий</option>
-          <option>Черный</option>
-          <option>Зеленый</option>
+        <label for="exampleFormControlSelect1">Культура</label>
+        <select class="form-control" id="culture">
+          <option>Картофель</option>
+          <option>Рапс</option>
+          <option>Кукуруза</option>
+          <option>Пшеница</option>
+          <option>Морковь</option>
         </select>
       </div>
       <div class="form-group">
@@ -72,18 +72,18 @@
         </div>
       </div>
       <center>
-        <button onclick="draw_type = 'draw_new'" class="btn btn-default btn-lg">
+        <button onclick="draw_type = 'draw_new'" id="draw" class="btn btn-default btn-lg">
           <span class="glyphicon glyphicon-pencil" aria-hidden="true"> Draw</span>
         </button>
-        <button onclick="draw_type = 'draw_hole'" class="btn btn-default btn-lg">
+        <button onclick="draw_type = 'draw_hole'" id="cut" class="btn btn-default btn-lg">
           <span class="glyphicon glyphicon-scissors" aria-hidden="true"> Cut</span>
         </button><br><br>
-        <button onclick="all_fields = []; count = 0; draw_type = 'draw_new'; square = 0; document.getElementById('square').value = '0 га'; main1()" class="btn btn-danger btn-lg">
+        <button onclick="document.getElementById('draw').disabled = false; document.getElementById('cut').disabled = true; all_fields = []; count = 0; draw_type = 'draw_new'; square = 0; document.getElementById('square').value = '0 га'; main();" class="btn btn-danger btn-lg">
           <span class="glyphicon glyphicon-trash" aria-hidden="true"> Удалить</span>
         </button>
         <br>
         <br>
-        <button class="btn btn-lg btn-primary">Продолжить</button>
+        <button onclick="create()" class="btn btn-lg btn-primary">Продолжить</button>
       </center><br>
       <div style="border: 1px solid red;">
         <div style="padding: 3px;">
@@ -94,11 +94,34 @@
     </div>
     <div id="map" class="col-md-9"></div>
     <script>
-   	var count = 0
-    var countTmp = 1
-    var all_fields = [];
-   	var draw_type = 'draw_new'
-    var square = 0
+     	var count = 0
+      var some_count = 0
+      var countTmp = 1
+      var all_fields = [];
+     	var draw_type = 'draw_new'
+      var square = 0
+      function create(){
+        if(document.getElementById("field_name").value == ''){
+          alert("Введите название поля");
+        }else{
+          all_fields.push(document.getElementById("field_name").value);
+          all_fields.push(square);
+          all_fields.push(document.getElementById("culture").value);
+          var xhr = new XMLHttpRequest();
+          var url = "http://localhost/CSphp1/new_field.php?data=" + encodeURIComponent(JSON.stringify(all_fields));
+          xhr.open("GET", url, true);
+          xhr.setRequestHeader("Content-Type", "application/json");
+          xhr.onreadystatechange = function () {
+              if (xhr.readyState === 4 && xhr.status === 200) {
+                  console.log(xhr.responseText);
+                  if(xhr.responseText == 'good'){
+                    window.open('http://localhost/CSphp1/dashboard.php')
+                  }
+              }
+          };
+          xhr.send();
+        }
+      }
       function addScript(src){
         var script = document.createElement('script');
         script.src = src;
@@ -106,11 +129,14 @@
         document.head.appendChild(script);
       }
       function main(){
+
         var map = new google.maps.Map(document.getElementById('map'), {
           zoom: 13,
           center: {lat: 56.4404073, lng: 84.896531},
           mapTypeId: 'satellite'
         });
+        document.getElementById('cut').disabled = true;
+        //document.getElementById('cut').disabled = true;
         /*var outerCoords = [
           {lat: 25.774, lng: -80.190},
           {lat: 18.466, lng: -66.118},
@@ -151,8 +177,13 @@
           center: {lat: 56.4404073, lng: 84.896531},
           mapTypeId: 'satellite'
         });
+        //some_count =
+        //alert('all_fields[0][0]')
         if(draw_type == 'draw_new'){
           countTmp = 1
+          draw_type = 'draw_hole'
+          document.getElementById('draw').disabled = true;
+          document.getElementById('cut').disabled = false;
           for (var i = 0; i < all_fields.length; i++) {
             if(all_fields[i][1] !== undefined){
               map.data.add({geometry: new google.maps.Data.Polygon([all_fields[i][0], all_fields[i][1]])})

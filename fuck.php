@@ -14,8 +14,19 @@
 
   <section class="content">
     <hr>
+    <?php
+      /*session_start();
+      include('regFiles/bd.php');
+      $q = $mysqli->query("SELECT * FROM ".$_SESSION['login']."");
+      if (mysql_num_rows($q)==0){
+          $ebuchaya_ditch = 'true';
+      }else{
+          $ebuchaya_ditch = 'false';
+      }*/
+      echo "<script>alert(".$_SESSION['login'].")</script>";
+    ?>
     <div class="embed-responsive embed-responsive-16by9" style="width: 100%;">
-      <iframe class="embed-responsive-item" src="map.php"></iframe>
+      <iframe class="embed-responsive-item" src="new_map.php"></iframe>
     </div>
 
     <!-- /.row ---------------------------------------------------------------------->
