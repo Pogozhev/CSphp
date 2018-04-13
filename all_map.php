@@ -56,7 +56,7 @@
       <?php
         session_start();
         $new_count = 0;
-        //$_SESSION['login'] = 'bad_company';
+        $_SESSION['login'] = 'bad_company';
         $login = $_SESSION['login'];
         function getNames(){
           include('regFiles/bd.php');
@@ -236,7 +236,6 @@
                   $now_inner = 0;
                   foreach ($fields as $key) {
                     //var_dump($key[0]);
-                    echo "contentString_".$i." = '".$key[0]."';";
                     if($key[0] == $tmp){
                       $name_un = (implode("_",$key));
                       $inner_coords[$now_inner] = ((viewField($login, $name_un, 'inner', $now_inner)));
@@ -250,7 +249,7 @@
                         }
                         $map_add = rtrim($map_add,", ");
                         $map_add .= '])}); ';
-                        echo "console.log(outerCoords[0].lat);
+                        echo "console.log(outerCoords[0].lat); contentString_".$count." = '".$key[0]."';
 
   infowindow[".$count."] = new google.maps.InfoWindow({
     content: contentString_".$count."
@@ -276,7 +275,7 @@
                   }
                   $map_add = rtrim($map_add,", ");
                   $map_add .= '])}); ';
-                  echo "console.log(outerCoords[0].lat); 
+                  echo "console.log(outerCoords[0].lat); contentString_".$count." = '".$key[0]."';
                 infowindow[".$count."] = new google.maps.InfoWindow({
                 content: contentString_".$count."
                 }); console.log(outerCoords[0].lng); marker_".$count." = new google.maps.Marker({position: {lat: outerCoords[0].lat, lng: outerCoords[0].lng}, map: map}); ";
