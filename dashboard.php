@@ -219,7 +219,7 @@
               echo file_get_contents('monitoring.html');
               break;
             case 'profile':
-              echo file_get_contents('profile.html');
+              include('profile.php');
               break;
             default:
               echo file_get_contents('monitoring.html');

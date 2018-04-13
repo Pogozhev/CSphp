@@ -52,12 +52,15 @@
     </style>
   </head>
   <body>
-    <div id="field_table" class="col-md-3">
+    <div id="field_table" class="col-md-4">
+      <table class="table">
       <?php
         session_start();
+        $_SESSION['login'] = 'manager_1';
+        $login = $_SESSION['login'];
         function getNames(){
           include('regFiles/bd.php');
-            $result = $mysqli->query("SELECT * FROM test_field");
+            $result = $mysqli->query("SELECT * FROM ".$login."");
             $test = [];
             $x = 0;
             if ($result->num_rows > 0) {
@@ -77,23 +80,87 @@
               $companys = $row['companys'];
             }
         }
-        $companys = explode(",", $companys);
-        foreach ($companys as $key) {
-          echo '<button type="button" class="btn btn-default btn-lg btn-block">'.$key.'</button>';
+        if($rules !== 'manager'){
+          $_SESSION['companys'] = 0;
+          $result = $mysqli->query("SELECT * FROM ".$login."");
+          $test = [];
+          $x = 0;
+          if ($result->num_rows > 0) {
+              while($row = $result->fetch_assoc()) {
+                  $test[$x] = $row['name'];
+                  $x++;
+              }
+          }
+          $names = (array_unique($test));
+          $fields = [];
+          $i = 0;
+          foreach ($names as $key) {
+            $tmp_array = explode("_", $key);
+            $fields[$i] = $tmp_array;
+            $i++;
+          }
+          $view_field = [];
+          $tmp = "";
+          foreach ($fields as $key) {
+            if($key[0] !== $tmp){
+              $result = $mysqli->query("SELECT square FROM ".$login." WHERE name = '".$key[0]."'");
+              if ($result->num_rows > 0) {
+                  while($row = $result->fetch_assoc()) {
+                      $square= $row['square'];
+                  }
+              }
+              echo '<tr><td><span style="display: inline-block;" class="glyphicon glyphicon-grain" aria-hidden="true"></span></td><td><h3 style="display: inline-block;"><b>'.$key[0].'</b></h3></td><td><h3 style="display: inline-block; padding-right: 10px;;">'.$square.'</h3>га</td></tr>';
+            }
+            $tmp = $key[0];
+          }
+        }else{
+          $companys = explode(',', $companys);
+          $_SESSION['companys'] = $companys;
+          foreach ($companys as $var) {
+            echo '<button type="button" class="btn btn-default btn-lg btn-block">'.$var.'</button>';
+            $login = $var;
+            $result = $mysqli->query("SELECT * FROM ".$login."");
+            $test = [];
+            $x = 0;
+            if ($result->num_rows > 0) {
+                while($row = $result->fetch_assoc()) {
+                    $test[$x] = $row['name'];
+                    $x++;
+                }
+            }
+            $names = (array_unique($test));
+            $fields = [];
+            $i = 0;
+            foreach ($names as $key) {
+              $tmp_array = explode("_", $key);
+              $fields[$i] = $tmp_array;
+              $i++;
+            }
+            $view_field = [];
+            $tmp = "";
+            foreach ($fields as $key) {
+              if($key[0] !== $tmp){
+                $result = $mysqli->query("SELECT square FROM ".$login." WHERE name = '".$key[0]."'");
+                if ($result->num_rows > 0) {
+                    while($row = $result->fetch_assoc()) {
+                        $square= $row['square'];
+                    }
+                }
+                echo '<tr><td><span style="display: inline-block;" class="glyphicon glyphicon-grain" aria-hidden="true"></span></td><td><h3 style="display: inline-block;"><b>'.$key[0].'</b></h3></td><td><h3 style="display: inline-block; padding-right: 10px;;">'.$square.'</h3>га</td></tr>';
+              }
+              $tmp = $key[0];
+            }
+          }
+          //var_dump($companys);
         }
-        $names = (array_unique(getNames()));
-        $fields = [];
-        $i = 0;
-        foreach ($names as $key) {
-          $tmp_array = explode("_", $key);
-          $fields[$i] = $tmp_array;
-          $i++;
-        }
-        var_dump($fields);
+
+        //var_dump($fields[6][0]);
+
         //echo $_SESSION['login'];
       ?>
+    </table>
     </div>
-    <div id="map" class="col-md-9"></div>
+    <div id="map" class="col-md-8"></div>
     <script>
       function main(){
         var map = new google.maps.Map(document.getElementById('map'), {
@@ -103,10 +170,14 @@
         });
 
         <?php
-          function viewField($field_name, $type, $now_inner){
+          $login = $_SESSION['login'];
+          //var_dump($_SESSION['companys']);
+          function viewField($login, $field_name, $type, $now_inner){
+            //$login = $_SESSION['login'];
             include('regFiles/bd.php');
+            //echo $field_name;
             $coordinates = '';
-              $result = $mysqli->query("SELECT * FROM test_field WHERE name = '$field_name'");
+              $result = $mysqli->query("SELECT * FROM ".$login." WHERE name = '$field_name'");
               if ($result->num_rows > 0) {
                 while($row = $result->fetch_assoc()) {
                   $coordinates = $coordinates . "{lat: {$row['gisx']}, lng: {$row['gisy']}},";
@@ -120,66 +191,119 @@
                 echo "var innerCoords_{$now_inner} = [{$coordinates}]; ";
               }
             }
-
-              // Уникальные имена
-              function getNames(){
-                include('regFiles/bd.php');
-                  $result = $mysqli->query("SELECT * FROM test_field");
-                  $test = [];
-                  $x = 0;
-                  if ($result->num_rows > 0) {
-                      while($row = $result->fetch_assoc()) {
-                          $test[$x] = $row['name'];
-                          $x++;
-                      }
-                      return $test;
-                  }
-              }
-              $names = (array_unique(getNames()));
-              $fields = [];
-              $i = 0;
-              foreach ($names as $key) {
-                $tmp_array = explode("_", $key);
-                $fields[$i] = $tmp_array;
-                $i++;
-              }
-              $tmp = "";
-              $inner_coords = [];
-              $i = 0;
-              $now_inner = 0;
-              foreach ($fields as $key) {
-                if($key[0] == $tmp){
-                  $name_un = (implode("_",$key));
-                  $inner_coords[$now_inner] = ((viewField($name_un, 'inner', $now_inner)));
-                  $now_inner++;
-                }else{
-                  if($i !== 0){
-                    $map_add = "map.data.add({geometry: new google.maps.Data.Polygon([outerCoords,";
-                    for ($j=0; $j < $now_inner; $j++) {
-                      $map_add .= " innerCoords_{$j}, ";
+            if($_SESSION['companys'] !== 0){
+              foreach ($_SESSION['companys'] as $login) {
+                $result = $mysqli->query("SELECT * FROM ".$login."");
+                $test = [];
+                $x = 0;
+                if ($result->num_rows > 0) {
+                    while($row = $result->fetch_assoc()) {
+                        $test[$x] = $row['name'];
+                        $x++;
                     }
-                    $map_add = rtrim($map_add,", ");
-                    $map_add .= '])}); ';
-                    echo $map_add;
-                    //echo "map.data.add({geometry: new google.maps.Data.Polygon([all_fields[i][0]])})";
-                    $name_un = (implode("_",$key));
-                    echo(viewField($name_un, 'outer', 228));
-                    $now_inner = 0;
-                  }else{
-                    $name_un = (implode("_",$key));
-                    echo(viewField($name_un, 'outer', 228));
-                  }
                 }
-                $tmp = $key[0];
-                $i++;
+                  $names = (array_unique($test));
+                  $fields = [];
+                  $i = 0;
+                  foreach ($names as $key) {
+                    $tmp_array = explode("_", $key);
+                    $fields[$i] = $tmp_array;
+                    $i++;
+                  }
+                  $tmp = "";
+                  $inner_coords = [];
+                  $i = 0;
+                  $now_inner = 0;
+                  foreach ($fields as $key) {
+                    if($key[0] == $tmp){
+                      $name_un = (implode("_",$key));
+                      $inner_coords[$now_inner] = ((viewField($login, $name_un, 'inner', $now_inner)));
+                      $now_inner++;
+                    }else{
+                      if($i !== 0){
+                        $map_add = "map.data.add({geometry: new google.maps.Data.Polygon([outerCoords,";
+                        for ($j=0; $j < $now_inner; $j++) {
+                          $map_add .= " innerCoords_{$j}, ";
+                        }
+                        $map_add = rtrim($map_add,", ");
+                        $map_add .= '])}); ';
+                        echo $map_add;
+                        //echo "map.data.add({geometry: new google.maps.Data.Polygon([all_fields[i][0]])})";
+                        $name_un = (implode("_",$key));
+                        echo(viewField($login, $name_un, 'outer', 228));
+                        $now_inner = 0;
+                      }else{
+                        $name_un = (implode("_",$key));
+                        echo(viewField($login, $name_un, 'outer', 228));
+                      }
+                    }
+                    $tmp = $key[0];
+                    $i++;
+                  }
+                  $map_add = "map.data.add({geometry: new google.maps.Data.Polygon([outerCoords,";
+                  for ($j=0; $j < $now_inner; $j++) {
+                    $map_add .= "innerCoords_{$j},";
+                  }
+                  $map_add = rtrim($map_add,", ");
+                  $map_add .= '])}); ';
+                  echo $map_add;
               }
-              $map_add = "map.data.add({geometry: new google.maps.Data.Polygon([outerCoords,";
-              for ($j=0; $j < $now_inner; $j++) {
-                $map_add .= "innerCoords_{$j},";
+            }else{
+              $result = $mysqli->query("SELECT * FROM ".$login."");
+              $test = [];
+              $x = 0;
+              if ($result->num_rows > 0) {
+                  while($row = $result->fetch_assoc()) {
+                      $test[$x] = $row['name'];
+                      $x++;
+                  }
               }
-              $map_add = rtrim($map_add,", ");
-              $map_add .= '])}); ';
-              echo $map_add;
+                $names = (array_unique($test));
+                $fields = [];
+                $i = 0;
+                foreach ($names as $key) {
+                  $tmp_array = explode("_", $key);
+                  $fields[$i] = $tmp_array;
+                  $i++;
+                }
+                $tmp = "";
+                $inner_coords = [];
+                $i = 0;
+                $now_inner = 0;
+                foreach ($fields as $key) {
+                  if($key[0] == $tmp){
+                    $name_un = (implode("_",$key));
+                    $inner_coords[$now_inner] = ((viewField($name_un, 'inner', $now_inner)));
+                    $now_inner++;
+                  }else{
+                    if($i !== 0){
+                      $map_add = "map.data.add({geometry: new google.maps.Data.Polygon([outerCoords,";
+                      for ($j=0; $j < $now_inner; $j++) {
+                        $map_add .= " innerCoords_{$j}, ";
+                      }
+                      $map_add = rtrim($map_add,", ");
+                      $map_add .= '])}); ';
+                      echo $map_add;
+                      //echo "map.data.add({geometry: new google.maps.Data.Polygon([all_fields[i][0]])})";
+                      $name_un = (implode("_",$key));
+                      echo(viewField($name_un, 'outer', 228));
+                      $now_inner = 0;
+                    }else{
+                      $name_un = (implode("_",$key));
+                      echo(viewField($name_un, 'outer', 228));
+                    }
+                  }
+                  $tmp = $key[0];
+                  $i++;
+                }
+                $map_add = "map.data.add({geometry: new google.maps.Data.Polygon([outerCoords,";
+                for ($j=0; $j < $now_inner; $j++) {
+                  $map_add .= "innerCoords_{$j},";
+                }
+                $map_add = rtrim($map_add,", ");
+                $map_add .= '])}); ';
+                echo $map_add;
+            }
           ?>
 
         //document.getElementById('cut').disabled = true;
