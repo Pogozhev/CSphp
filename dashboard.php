@@ -210,6 +210,7 @@
   <!-- Content Wrapper. Contains page content -->
     <div class="content-wrapper" style="min-height: 901px;">
       <?php
+      $_SESSION['login'] = 'bad_company';
         if(isset($_GET['page'])){
           switch ($_GET['page']) {
             case 'field':

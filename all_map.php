@@ -53,9 +53,9 @@
   </head>
   <body>
     <div id="field_table" class="col-md-4">
-      <table class="table">
       <?php
         session_start();
+        $new_count = 0;
         $_SESSION['login'] = 'manager_1';
         $login = $_SESSION['login'];
         function getNames(){
@@ -109,15 +109,18 @@
                       $square= $row['square'];
                   }
               }
-              echo '<tr><td><span style="display: inline-block;" class="glyphicon glyphicon-grain" aria-hidden="true"></span></td><td><h3 style="display: inline-block;"><b>'.$key[0].'</b></h3></td><td><h3 style="display: inline-block; padding-right: 10px;;">'.$square.'</h3>га</td></tr>';
+              echo '<tr id="tr_'.$new_count.'"><td><span style="display: inline-block;" class="glyphicon glyphicon-grain" aria-hidden="true"></span></td><td><h3 style="display: inline-block;"><b>'.$key[0].'</b></h3></td><td><h3 style="display: inline-block; padding-right: 10px;;">'.$square.'</h3>га</td></tr>';
+              $new_count++;
             }
             $tmp = $key[0];
           }
         }else{
           $companys = explode(',', $companys);
           $_SESSION['companys'] = $companys;
+          $count = 0;
           foreach ($companys as $var) {
-            echo '<button type="button" class="btn btn-default btn-lg btn-block">'.$var.'</button>';
+            echo '<table id="table_'.$count.'" class="table table-hover" style="border-radius: 5%; display: none;">';
+            echo '<button type="button" onclick="open_table(`table_'.$count.'`)" class="btn btn-default btn-lg btn-block">'.$var.'</button>';
             $login = $var;
             $result = $mysqli->query("SELECT * FROM ".$login."");
             $test = [];
@@ -146,12 +149,15 @@
                         $square= $row['square'];
                     }
                 }
-                echo '<tr><td><span style="display: inline-block;" class="glyphicon glyphicon-grain" aria-hidden="true"></span></td><td><h3 style="display: inline-block;"><b>'.$key[0].'</b></h3></td><td><h3 style="display: inline-block; padding-right: 10px;;">'.$square.'</h3>га</td></tr>';
+                echo '<tr id="tr_'.$new_count.'"><td><span style="display: inline-block;" class="glyphicon glyphicon-grain" aria-hidden="true"></span></td><td style="width: 300px"><h3 style="display: inline-block;"><b>'.$key[0].'</b></h3></td><td><h3 style="display: inline-block; padding-right: 10px;;">'.$square.'</h3>га</td></tr>';
+                $new_count++;
+                //echo '<tr><td><span style="display: inline-block;" class="glyphicon glyphicon-grain" aria-hidden="true"></span></td><td><h3 style="display: inline-block;"><b>'.$key[0].'</b></h3></td><td><h3 style="display: inline-block; padding-right: 10px;;">'.$square.'</h3>га</td></tr>';
               }
               $tmp = $key[0];
             }
+            echo "</table>";
+            $count++;
           }
-          //var_dump($companys);
         }
 
         //var_dump($fields[6][0]);
@@ -162,8 +168,19 @@
     </div>
     <div id="map" class="col-md-8"></div>
     <script>
+      var map;
+      var infowindow = [];
+      var contentString = "";
+      function open_table(table){
+        if(document.getElementById(table).style.display == "none"){
+          document.getElementById(table).style.display = "block";
+        }else{
+          document.getElementById(table).style.display = "none";
+        }
+
+      }
       function main(){
-        var map = new google.maps.Map(document.getElementById('map'), {
+        map = new google.maps.Map(document.getElementById('map'), {
           zoom: 13,
           center: {lat: 56.4404073, lng: 84.896531},
           mapTypeId: 'satellite'
@@ -171,6 +188,7 @@
 
         <?php
           $login = $_SESSION['login'];
+          $count = 0;
           //var_dump($_SESSION['companys']);
           function viewField($login, $field_name, $type, $now_inner){
             //$login = $_SESSION['login'];
@@ -215,24 +233,33 @@
                   $i = 0;
                   $now_inner = 0;
                   foreach ($fields as $key) {
+                    var_dump($key[0]);
                     if($key[0] == $tmp){
                       $name_un = (implode("_",$key));
                       $inner_coords[$now_inner] = ((viewField($login, $name_un, 'inner', $now_inner)));
                       $now_inner++;
                     }else{
                       if($i !== 0){
-                        $map_add = "map.data.add({geometry: new google.maps.Data.Polygon([outerCoords,";
+                        //var_dump($key);
+                        $map_add = "var asd = map.data.add({geometry: new google.maps.Data.Polygon([outerCoords,";
                         for ($j=0; $j < $now_inner; $j++) {
                           $map_add .= " innerCoords_{$j}, ";
                         }
                         $map_add = rtrim($map_add,", ");
                         $map_add .= '])}); ';
+                        echo "console.log(outerCoords[0].lat); contentString = '".$key[0]."';
+
+  infowindow[".$count."] = new google.maps.InfoWindow({
+    content: contentString
+  }); console.log(outerCoords[0].lng); marker_".$count." = new google.maps.Marker({position: {lat: outerCoords[0].lat, lng: outerCoords[0].lng}, map: map}); ";
+                        $count++;
                         echo $map_add;
                         //echo "map.data.add({geometry: new google.maps.Data.Polygon([all_fields[i][0]])})";
                         $name_un = (implode("_",$key));
                         echo(viewField($login, $name_un, 'outer', 228));
                         $now_inner = 0;
                       }else{
+                        //var_dump($key);
                         $name_un = (implode("_",$key));
                         echo(viewField($login, $name_un, 'outer', 228));
                       }
@@ -240,12 +267,17 @@
                     $tmp = $key[0];
                     $i++;
                   }
-                  $map_add = "map.data.add({geometry: new google.maps.Data.Polygon([outerCoords,";
+                  $map_add = "var asd = map.data.add({geometry: new google.maps.Data.Polygon([outerCoords,";
                   for ($j=0; $j < $now_inner; $j++) {
                     $map_add .= "innerCoords_{$j},";
                   }
                   $map_add = rtrim($map_add,", ");
                   $map_add .= '])}); ';
+                  echo "console.log(outerCoords[0].lat); contentString = '".$key[0]."';
+                infowindow[".$count."] = new google.maps.InfoWindow({
+                content: contentString
+                }); console.log(outerCoords[0].lng); marker_".$count." = new google.maps.Marker({position: {lat: outerCoords[0].lat, lng: outerCoords[0].lng}, map: map}); ";
+                  $count++;
                   echo $map_add;
               }
             }else{
@@ -277,7 +309,7 @@
                     $now_inner++;
                   }else{
                     if($i !== 0){
-                      $map_add = "map.data.add({geometry: new google.maps.Data.Polygon([outerCoords,";
+                      $map_add = "var asd = map.data.add({geometry: new google.maps.Data.Polygon([outerCoords,";
                       for ($j=0; $j < $now_inner; $j++) {
                         $map_add .= " innerCoords_{$j}, ";
                       }
@@ -296,7 +328,7 @@
                   $tmp = $key[0];
                   $i++;
                 }
-                $map_add = "map.data.add({geometry: new google.maps.Data.Polygon([outerCoords,";
+                $map_add = "var asd = map.data.add({geometry: new google.maps.Data.Polygon([outerCoords,";
                 for ($j=0; $j < $now_inner; $j++) {
                   $map_add .= "innerCoords_{$j},";
                 }
@@ -304,43 +336,31 @@
                 $map_add .= '])}); ';
                 echo $map_add;
             }
+            echo "google.maps.event.addListener(asd, 'click', function (event) {
+        //alert the index of the polygon
+        alert('p.indexID');
+    }); ";
+            echo "} ";
+            // End of main function
+            for ($i=0; $i < $count; $i++) {
+              echo "$('#tr_".$i."').hover(function(){
+                      infowindow[".$i."].open(map, marker_".$i.")
+                    }, function(){
+                      infowindow[".$i."].close()
+                    }); ";
+            }
+            //var_dump($count);
           ?>
 
-        //document.getElementById('cut').disabled = true;
-        /*var outerCoords = [
-          {lat: 25.774, lng: -80.190},
-          {lat: 18.466, lng: -66.118},
-          {lat: 32.321, lng: -64.757}
-        ];
-
-        var innerCoords1 = [
-          {lat: 25.745, lng: -68.300},
-          {lat: 29.570, lng: -67.514},
-          {lat: 27.339, lng: -66.668}
-        ];
-
-        var innerCoords = [
-          {lat: 23.973, lng: -73.036},
-          {lat: 22.803, lng: -68.334},
-          {lat: 26.202, lng: -67.763}
-        ];
-        var bermudaTriangle = new google.maps.Polygon({
-	         paths: [outerCoords],
-	         strokeColor: '#FFC107',
-	         strokeOpacity: 0.8,
-	         strokeWeight: 2,
-	         fillColor: '#FFC107',
-	         fillOpacity: 0.35
-	       });*/
-        // Construct the polygon, including both paths.
-
-
-
-        // Создани множества полей из таблиц
-		    //bermudaTriangle.setMap(map);
-        // Define the LatLng coordinates for the polygon's  outer path.
-        //draw(map);
+      /*$('#tr_0').hover(function(){
+        infowindow[0].open(map, marker_0);
+      )};
+      */
+      function mark(){
+        infowindow[0].open(map, marker_0);
+        //infowindow.open(map, beachMarker);
       }
+      // Adds a marker to the map.
       function draw(map){
         var drawingManager = new google.maps.drawing.DrawingManager({
             drawingMode: google.maps.drawing.OverlayType.POLYGON,
