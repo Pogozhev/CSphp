@@ -15,7 +15,9 @@
   <section class="content">
     <hr>
     <?php
-    $_SESSION['login'] = 'manager_1';
+    //session_start();
+    var_dump($_SESSION['login']);
+    //$_SESSION['login'] = 'manager_1';
       include('regFiles/bd.php');
       $result = $mysqli->query("SELECT * FROM people WHERE name = '".$_SESSION['login']."'");
       if ($result->num_rows > 0) {

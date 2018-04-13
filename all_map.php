@@ -56,7 +56,7 @@
       <?php
         session_start();
         $new_count = 0;
-        $_SESSION['login'] = 'manager_1';
+        //$_SESSION['login'] = 'bad_company';
         $login = $_SESSION['login'];
         function getNames(){
           include('regFiles/bd.php');
@@ -82,6 +82,8 @@
         }
         if($rules !== 'manager'){
           $_SESSION['companys'] = 0;
+          $count = 0;
+          echo '<table id="table_'.$count.'" class="table table-hover" style="border-radius: 5%;">';
           $result = $mysqli->query("SELECT * FROM ".$login."");
           $test = [];
           $x = 0;
@@ -155,9 +157,9 @@
               }
               $tmp = $key[0];
             }
-            echo "</table>";
             $count++;
           }
+          echo "</table>";
         }
 
         //var_dump($fields[6][0]);
@@ -170,7 +172,7 @@
     <script>
       var map;
       var infowindow = [];
-      var contentString = "";
+      //var contentString_".$count." = "";
       function open_table(table){
         if(document.getElementById(table).style.display == "none"){
           document.getElementById(table).style.display = "block";
@@ -187,7 +189,7 @@
         });
 
         <?php
-          $login = $_SESSION['login'];
+          //$login = $_SESSION['login'];
           $count = 0;
           //var_dump($_SESSION['companys']);
           function viewField($login, $field_name, $type, $now_inner){
@@ -233,7 +235,8 @@
                   $i = 0;
                   $now_inner = 0;
                   foreach ($fields as $key) {
-                    var_dump($key[0]);
+                    //var_dump($key[0]);
+                    echo "contentString_".$i." = '".$key[0]."';";
                     if($key[0] == $tmp){
                       $name_un = (implode("_",$key));
                       $inner_coords[$now_inner] = ((viewField($login, $name_un, 'inner', $now_inner)));
@@ -247,10 +250,10 @@
                         }
                         $map_add = rtrim($map_add,", ");
                         $map_add .= '])}); ';
-                        echo "console.log(outerCoords[0].lat); contentString = '".$key[0]."';
+                        echo "console.log(outerCoords[0].lat);
 
   infowindow[".$count."] = new google.maps.InfoWindow({
-    content: contentString
+    content: contentString_".$count."
   }); console.log(outerCoords[0].lng); marker_".$count." = new google.maps.Marker({position: {lat: outerCoords[0].lat, lng: outerCoords[0].lng}, map: map}); ";
                         $count++;
                         echo $map_add;
@@ -273,14 +276,15 @@
                   }
                   $map_add = rtrim($map_add,", ");
                   $map_add .= '])}); ';
-                  echo "console.log(outerCoords[0].lat); contentString = '".$key[0]."';
+                  echo "console.log(outerCoords[0].lat); 
                 infowindow[".$count."] = new google.maps.InfoWindow({
-                content: contentString
+                content: contentString_".$count."
                 }); console.log(outerCoords[0].lng); marker_".$count." = new google.maps.Marker({position: {lat: outerCoords[0].lat, lng: outerCoords[0].lng}, map: map}); ";
                   $count++;
                   echo $map_add;
               }
             }else{
+              $count = 0;
               $result = $mysqli->query("SELECT * FROM ".$login."");
               $test = [];
               $x = 0;
@@ -303,9 +307,11 @@
                 $i = 0;
                 $now_inner = 0;
                 foreach ($fields as $key) {
+                  //var_dump($key);
+                  echo "contentString_".$i." = '".$key[0]."';";
                   if($key[0] == $tmp){
                     $name_un = (implode("_",$key));
-                    $inner_coords[$now_inner] = ((viewField($name_un, 'inner', $now_inner)));
+                    $inner_coords[$now_inner] = ((viewField($login, $name_un, 'inner', $now_inner)));
                     $now_inner++;
                   }else{
                     if($i !== 0){
@@ -315,14 +321,19 @@
                       }
                       $map_add = rtrim($map_add,", ");
                       $map_add .= '])}); ';
+                      echo "console.log(outerCoords[0].lat);
+                    infowindow[".$count."] = new google.maps.InfoWindow({
+                    content: contentString_".$count."
+                    }); console.log(outerCoords[0].lng); marker_".$count." = new google.maps.Marker({position: {lat: outerCoords[0].lat, lng: outerCoords[0].lng}, map: map}); ";
+                    $count++;
                       echo $map_add;
                       //echo "map.data.add({geometry: new google.maps.Data.Polygon([all_fields[i][0]])})";
                       $name_un = (implode("_",$key));
-                      echo(viewField($name_un, 'outer', 228));
+                      echo(viewField($login, $name_un, 'outer', 228));
                       $now_inner = 0;
                     }else{
                       $name_un = (implode("_",$key));
-                      echo(viewField($name_un, 'outer', 228));
+                      echo(viewField($login, $name_un, 'outer', 228));
                     }
                   }
                   $tmp = $key[0];
@@ -334,12 +345,13 @@
                 }
                 $map_add = rtrim($map_add,", ");
                 $map_add .= '])}); ';
+                echo "console.log(outerCoords[0].lat);
+              infowindow[".$count."] = new google.maps.InfoWindow({
+              content: contentString_".$count."
+              }); console.log(outerCoords[0].lng); marker_".$count." = new google.maps.Marker({position: {lat: outerCoords[0].lat, lng: outerCoords[0].lng}, map: map}); ";
+                $count++;
                 echo $map_add;
             }
-            echo "google.maps.event.addListener(asd, 'click', function (event) {
-        //alert the index of the polygon
-        alert('p.indexID');
-    }); ";
             echo "} ";
             // End of main function
             for ($i=0; $i < $count; $i++) {
@@ -351,11 +363,6 @@
             }
             //var_dump($count);
           ?>
-
-      /*$('#tr_0').hover(function(){
-        infowindow[0].open(map, marker_0);
-      )};
-      */
       function mark(){
         infowindow[0].open(map, marker_0);
         //infowindow.open(map, beachMarker);
@@ -381,13 +388,6 @@
           });
           drawingManager.setMap(map);
         }
-    </script>
-
-
-
-
-    <script>
-
     </script>
   </body>
 </html>
