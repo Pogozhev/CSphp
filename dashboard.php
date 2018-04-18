@@ -171,8 +171,8 @@
         </li>
 
          <li>
-          <a href="#">
-            <i class="fa fa-laptop"></i> <span>Работа</span>
+          <a href="javascript:document.getElementById('work').submit()">
+            <i class="fa fa-laptop"></i> <span>Прогноз</span>
 
           </a>
         </li>
@@ -199,7 +199,9 @@
         <form id="profile" method="GET" action="#">
           <input type="hidden" name="page" value="profile">
         </form>
-
+        <form id="work" method="GET" action="#">
+          <input type="hidden" name="page" value="work">
+        </form>
 
 
 
@@ -217,17 +219,20 @@
               include('fuck.php');// file_get_contents('field.php');
               break;
             case 'monitoring':
-              echo file_get_contents('monitoring.html');
+              include('monitoring.php');
               break;
             case 'profile':
               include('profile.php');
               break;
+            case 'work':
+              include('work.php');
+              break;
             default:
-              echo file_get_contents('monitoring.html');
+              include('monitoring.php');
               break;
           }
         }else{
-          echo file_get_contents('monitoring.html');
+          include('monitoring.php');
         }
 
       ?>

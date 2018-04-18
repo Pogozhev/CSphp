@@ -111,7 +111,7 @@
                       $square= $row['square'];
                   }
               }
-              echo '<tr id="tr_'.$new_count.'"><td><span style="display: inline-block;" class="glyphicon glyphicon-grain" aria-hidden="true"></span></td><td><h3 style="display: inline-block;"><b>'.$key[0].'</b></h3></td><td><h3 style="display: inline-block; padding-right: 10px;;">'.$square.'</h3>га</td></tr>';
+              echo '<tr id="tr_'.$new_count.'"><td><img src="https://dacom.farm/media/wolf/images/icons/tarwe.png" width="30px"></td><td><h3 style="display: inline-block;"><b>'.$key[0].'</b></h3></td><td><h3 style="display: inline-block; padding-right: 10px;;">'.$square.' га</h3></td></tr>';
               $new_count++;
             }
             $tmp = $key[0];
@@ -167,6 +167,9 @@
         //echo $_SESSION['login'];
       ?>
     </table>
+    <form method="GET" action="new_map.php">
+      <center><button class="btn btn-lg btn-success">Создать новое поле</button></center>
+    </form>
     </div>
     <div id="map" class="col-md-8"></div>
     <script>

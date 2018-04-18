@@ -109,14 +109,14 @@
           all_fields.push(document.getElementById("culture").value);
           var xhr = new XMLHttpRequest();
           console.log(all_fields);
-          var url = "http://localhost/CSphp1/new_field.php?data=" + encodeURIComponent(JSON.stringify(all_fields));
+          var url = "/new_field.php?data=" + encodeURIComponent(JSON.stringify(all_fields));
           xhr.open("GET", url, true);
           xhr.setRequestHeader("Content-Type", "application/json");
           xhr.onreadystatechange = function () {
               if (xhr.readyState === 4 && xhr.status === 200) {
                   console.log(xhr.responseText);
                   if(xhr.responseText == 'good'){
-                    window.open('http://localhost/CSphp1/dashboard.php?page=field')
+                    window.open('/dashboard.php?page=field')
                   }
               }
           };

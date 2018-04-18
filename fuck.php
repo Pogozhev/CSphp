@@ -16,7 +16,7 @@
     <hr>
     <?php
     //session_start();
-    var_dump($_SESSION['login']);
+    //var_dump($_SESSION['login']);
     //$_SESSION['login'] = 'manager_1';
       include('regFiles/bd.php');
       $result = $mysqli->query("SELECT * FROM people WHERE name = '".$_SESSION['login']."'");
@@ -38,7 +38,7 @@
           </div>';
         }else{
           echo '<div class="embed-responsive embed-responsive-16by9" style="width: 100%;">
-            <iframe class="embed-responsive-item" src="new_map.php"></iframe>
+            <iframe  class="embed-responsive-item" src="new_map.php"></iframe>
           </div>';
         }
       }

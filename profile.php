@@ -188,7 +188,7 @@
                 array.push(document.getElementById('rules').value)
                 console.log(array);
                 var xhr = new XMLHttpRequest();
-                var url = "http://localhost/CSphp1/save_people.php?data=" + encodeURIComponent(JSON.stringify(array));
+                var url = "/save_people.php?data=" + encodeURIComponent(JSON.stringify(array));
                 xhr.open("GET", url, true);
                 xhr.setRequestHeader("Content-Type", "application/json");
                 xhr.onreadystatechange = function () {
