@@ -1,13 +1,20 @@
-var dataset = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1];
+var dataset = [1, 2, 1];
 
 // let colors = ['#8dd3c7', '#ffffb3', '#bebada', '#fb8072', '#80b1d3', '#fdb462', '#b3de69', '#fccde5', '#d9d9d9', '#bc80bd'];
 // let colors = ['#67001f', '#b2182b', '#d6604d', '#f4a582', '#fddbc7', '#e0e0e0', '#bababa', '#878787', '#4d4d4d', '#1a1a1a'];
-var colors = ['#2281337', '#d53e4f', '#f46d43', '#fdae61', '#fee08b', '#e6f598', '#abdda4', '#66c2a5', '#3288bd', '#5e4fa2'];
-var text_suka = ['#1234', '#sfgsfgs', 'sfdgsdgds', 'asdfa', 'gdfsgds', '#gdfg', '#sfgsfgs', '#66c2a5', '#3288bd', '#5e4fa2'];
+var colors = ['#337f33', '#d53e4f', '#f46d43', '#fdae61', '#fee08b', '#e6f598', '#abdda4'];
+var text_suka = ['Рапс', 'Картофель', 'Кукуруза'];
 
-(function (){
-  
-})
+var xhr = new XMLHttpRequest();
+var url = "http://localhost/send_message.php?q=0";
+xhr.open("GET", url, true);
+xhr.setRequestHeader("Content-Type", "application/json");
+xhr.onreadystatechange = function () {
+    if (xhr.readyState === 4 && xhr.status === 200) {
+        console.log(xhr.responseText);
+    }
+};
+xhr.send();
 
 var width = document.querySelector('.chart-wrapper').offsetWidth;
 var height = document.querySelector('.chart-wrapper').offsetHeight;
@@ -111,7 +118,6 @@ var draw = function draw() {
     pos[0] = radius * 0.95 * (midAngle(d) < Math.PI ? 1 : -1);
     return [arc.centroid(d), outerArc.centroid(d), pos];
   });
-  polyline.stroke({ color: '#f06', width: 4, linecap: 'round', linejoin: 'round' })
 };
 
 draw();
@@ -126,4 +132,3 @@ var replay = function replay() {
 
   setTimeout(draw, 800);
 };
-setTimeout()

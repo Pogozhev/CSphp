@@ -186,8 +186,8 @@
       }
       function main(){
         map = new google.maps.Map(document.getElementById('map'), {
-          zoom: 13,
-          center: {lat: 56.4404073, lng: 84.896531},
+          zoom: 13.5,
+          center: {lat: 56.4367647, lng: 84.9415425},
           mapTypeId: 'satellite'
         });
 
